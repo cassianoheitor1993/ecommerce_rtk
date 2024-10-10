@@ -1,5 +1,8 @@
 import React from 'react';
 import './ProductList.css'; 
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { addItemToCart } from './CartSlice';
 
 const ProductList = () => {
 
@@ -9,11 +12,29 @@ const ProductList = () => {
     { id: 3, name: 'Product C', price: 30 },
   ];
 
+  const dispatch = useDispatch();
+  const [disableProducts, setDisabledProducts] = useState([]);
+  const handleAddToCart = product => {
+    dispatch(addItemToCart(product));
+    setDisabledProducts([...disableProducts, product.id]);
+  };
+
   return (
     <div className="product-list">
       <h2 className="product-list-title">Products</h2>
       <ul className="product-list-items">
-     
+        {products.map(product =>(
+            <li key={product.id} className='product-list-item'>
+                <span>{product.name} - ${product.price}</span>
+                <button
+                    className={`add-to-cart-btn ${disableProducts.includes(product.id) ? 'disabled' : ''}`}
+                    onClick={() => handleAddToCart(product)}
+                    disabled={disableProducts.includes(product.id)}
+                >
+                    Add to Cart
+                </button>
+            </li>
+        ))}
       </ul>
     </div>
   );
